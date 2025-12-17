@@ -48,6 +48,7 @@ ecommerce-api/
 │   └── main.py           # FastAPI application entry point
 ├── .env                  # Environment variables (ignored by Git)
 ├── .gitignore            # Git ignore file
+├── LICENSE               # MIT License
 ├── alembic.ini           # Alembic configuration
 ├── requirements.txt      # Python dependencies
 └── README.md             # This file
