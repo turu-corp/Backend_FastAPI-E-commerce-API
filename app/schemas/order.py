@@ -6,7 +6,7 @@ from datetime import datetime
 from sqlmodel import Field, Relationship, SQLModel
 from app.models.order import Order
 
-
+# --- Base Schema ---
 class BaseSchema(BaseModel):
     """A base schema for other schemas to inherit from."""
     class Config:
@@ -53,7 +53,7 @@ class OrderItemResponse(BaseModel):
     price_per_unit: int
     subtotal: int
     variant_id: uuid.UUID
-    # Anda bisa menambahkan detail variant jika perlu
+    # You can add more fields as needed
     
     class Config:
         orm_mode = True
@@ -126,17 +126,17 @@ class OrderSummary(BaseModel):
 
 # --- Payment Schemas ---
 class PaymentBase(BaseSchema):
-    # Hanya field yang relevan untuk request dan response
+    # Only the payment method is needed for creation
     method: PaymentMethod
 
 class PaymentCreate(PaymentBase):
-    # Schema ini hanya mewarisi 'method' dari PaymentBase
+    # This Schema is used when creating a payment
     pass
 
 class PaymentResponse(PaymentBase):
     id: uuid.UUID
     order_id: uuid.UUID
-    status: PaymentStatus # Status ditambahkan di sini, untuk response
+    status: PaymentStatus # Status is added here
     transaction_time: Optional[str] = None
     created_at: datetime
     updated_at: datetime
@@ -182,7 +182,6 @@ class ShippingResponse(BaseModel):
     is_active: bool = True
 
 # --- Discount Schemas ---
-
 class DiscountBase(BaseSchema):
     code: str
     description: Optional[str] = None

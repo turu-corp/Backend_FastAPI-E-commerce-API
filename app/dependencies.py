@@ -14,7 +14,7 @@ from app.utils.security import decode_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-
+# user role-based dependencies
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
@@ -46,7 +46,7 @@ def get_current_user(
     
     return user
 
-
+# Dependency to ensure the user is active
 def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:
     """
     Dependency untuk memastikan user aktif
@@ -54,7 +54,7 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
     """
     return current_user
 
-
+# Role-based access control dependency factory  
 def require_role(allowed_roles: list):
     """
     Dependency factory untuk role-based access control
@@ -88,7 +88,6 @@ def require_role(allowed_roles: list):
             )
         return current_user
     return role_checker
-
 
 # Convenience dependencies
 get_admin_user = require_role(["admin"])

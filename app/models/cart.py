@@ -5,6 +5,7 @@ from .base import TimeStampedModel
 from .product import ProductVariant
 from app.models.user import User
 
+# Cart and CartItem Models
 class Cart(TimeStampedModel, table=True):
     __tablename__ = "carts"
     user_id: uuid.UUID = Field(foreign_key="users.id")
@@ -12,6 +13,7 @@ class Cart(TimeStampedModel, table=True):
     user: "User" = Relationship(back_populates="cart")
     items: List["CartItem"] = Relationship(back_populates="cart")
 
+# CartItem Model
 class CartItem(TimeStampedModel, table=True):
     __tablename__ = "cart_items"
     cart_id: uuid.UUID = Field(foreign_key="carts.id")

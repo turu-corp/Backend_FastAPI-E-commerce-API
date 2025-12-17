@@ -21,7 +21,7 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 Base.metadata.create_all(bind=engine)
 
-
+# override the get_db dependency
 def override_get_db():
     """Override database dependency for testing"""
     try:
@@ -34,7 +34,7 @@ def override_get_db():
 app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)
 
-
+# Fixtures for test data
 @pytest.fixture(scope="module")
 def setup_test_data():
     """Setup test data before tests"""
@@ -75,7 +75,7 @@ def setup_test_data():
     # Cleanup
     Base.metadata.drop_all(bind=engine)
 
-
+# Helper function to get auth token
 def get_auth_token():
     """Helper function to get authentication token"""
     response = client.post(
@@ -87,7 +87,7 @@ def get_auth_token():
     )
     return response.json()["access_token"]
 
-
+# Test cases
 def test_get_products_empty():
     """Test getting products when none exist"""
     response = client.get("/api/v1/products/")
@@ -95,7 +95,7 @@ def test_get_products_empty():
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
-
+# Test creating product
 def test_create_product_unauthorized(setup_test_data):
     """Test creating product without authentication"""
     response = client.post(
@@ -111,7 +111,7 @@ def test_create_product_unauthorized(setup_test_data):
     
     assert response.status_code == 401
 
-
+# Test creating product
 def test_create_product_success(setup_test_data):
     """Test creating product with authentication"""
     token = get_auth_token()
@@ -148,7 +148,7 @@ def test_create_product_success(setup_test_data):
     assert len(data["images"]) == 1
     assert len(data["variants"]) == 1
 
-
+# Testing duplicate slug
 def test_create_product_duplicate_slug(setup_test_data):
     """Test creating product with duplicate slug"""
     token = get_auth_token()
@@ -182,7 +182,7 @@ def test_create_product_duplicate_slug(setup_test_data):
     assert response.status_code == 400
     assert "already exists" in response.json()["detail"].lower()
 
-
+# Testing get product by ID
 def test_get_product_by_id(setup_test_data):
     """Test getting product by ID"""
     token = get_auth_token()
@@ -210,7 +210,7 @@ def test_get_product_by_id(setup_test_data):
     assert data["id"] == product_id
     assert data["name"] == "Get By ID Product"
 
-
+# Test getting product by slug
 def test_get_product_by_slug(setup_test_data):
     """Test getting product by slug"""
     token = get_auth_token()
@@ -235,7 +235,7 @@ def test_get_product_by_slug(setup_test_data):
     data = response.json()
     assert data["slug"] == "get-by-slug"
 
-
+# Testing updating product
 def test_update_product(setup_test_data):
     """Test updating product"""
     token = get_auth_token()
@@ -270,7 +270,7 @@ def test_update_product(setup_test_data):
     assert data["name"] == "Updated Product"
     assert data["description"] == "Updated description"
 
-
+# Testing deleting product
 def test_delete_product(setup_test_data):
     """Test deleting product"""
     token = get_auth_token()
@@ -302,7 +302,7 @@ def test_delete_product(setup_test_data):
     get_response = client.get(f"/api/v1/products/{product_id}")
     assert get_response.status_code == 404
 
-
+# Testing search products
 def test_search_products(setup_test_data):
     """Test searching products"""
     token = get_auth_token()
@@ -328,7 +328,7 @@ def test_search_products(setup_test_data):
     assert len(data) > 0
     assert "iphone" in data[0]["name"].lower()
 
-
+# Testing pagination
 def test_pagination(setup_test_data):
     """Test product pagination"""
     token = get_auth_token()

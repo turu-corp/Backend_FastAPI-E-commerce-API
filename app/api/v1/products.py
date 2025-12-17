@@ -14,7 +14,8 @@ from app.models.user import User
 
 router = APIRouter()
 
-
+# Product Endpoints
+# Get Products with Pagination and Filters
 @router.get("/", response_model=List[ProductListResponse])
 def get_products(
     skip: int = Query(0, ge=0),
@@ -54,7 +55,7 @@ def get_products(
     products = query.offset(skip).limit(limit).all()
     return products
 
-
+# Get Product by ID
 @router.get("/{product_id}", response_model=ProductResponse)
 def get_product(product_id: str, db: Session = Depends(get_db)):
     """
@@ -72,7 +73,7 @@ def get_product(product_id: str, db: Session = Depends(get_db)):
     
     return product
 
-
+# Create Product
 @router.post("/", response_model=ProductResponse, status_code=status.HTTP_201_CREATED)
 def create_product(
     product_data: ProductCreate,
@@ -142,7 +143,7 @@ def create_product(
     
     return new_product
 
-
+# Update Product
 @router.put("/{product_id}", response_model=ProductResponse)
 def update_product(
     product_id: str,
@@ -180,7 +181,7 @@ def update_product(
     
     return product
 
-
+# Delete Product
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product(
     product_id: str,
@@ -209,7 +210,7 @@ def delete_product(
     
     return None
 
-
+# Get Product by Slug
 @router.get("/slug/{slug}", response_model=ProductResponse)
 def get_product_by_slug(slug: str, db: Session = Depends(get_db)):
     """

@@ -11,7 +11,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-
+# Brand Endpoints
 @router.get("/", response_model=List[BrandResponse])
 def get_brands(
     skip: int = Query(0, ge=0),
@@ -22,7 +22,7 @@ def get_brands(
     brands = db.query(Brand).offset(skip).limit(limit).all()
     return brands
 
-
+# Get Brand by ID
 @router.get("/{brand_id}", response_model=BrandResponse)
 def get_brand(brand_id: str, db: Session = Depends(get_db)):
     """Get a specific brand by ID"""
@@ -37,7 +37,7 @@ def get_brand(brand_id: str, db: Session = Depends(get_db)):
     
     return brand
 
-
+# Create Brand
 @router.post("/", response_model=BrandResponse, status_code=status.HTTP_201_CREATED)
 def create_brand(
     brand_data: BrandCreate,
@@ -57,7 +57,7 @@ def create_brand(
     
     return new_brand
 
-
+# Update Brand
 @router.put("/{brand_id}", response_model=BrandResponse)
 def update_brand(
     brand_id: str,
@@ -84,7 +84,7 @@ def update_brand(
     
     return brand
 
-
+# Delete Brand
 @router.delete("/{brand_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_brand(
     brand_id: str,

@@ -19,7 +19,8 @@ from app.services.email_service import EmailService
 
 router = APIRouter()
 
-
+# Order Endpoints
+# Helper functions for discount validation and calculation
 def validate_discount(code: str, subtotal: int, db: Session) -> Optional[Discount]:
     """Validate discount code and return discount object"""
     discount = db.query(Discount).filter(Discount.code == code).first()
@@ -44,7 +45,7 @@ def validate_discount(code: str, subtotal: int, db: Session) -> Optional[Discoun
     
     return discount
 
-
+# Calculate discount amount
 def calculate_discount_amount(discount: Discount, subtotal: int) -> int:
     """Calculate discount amount based on type"""
     if discount.percentage is not None:
@@ -53,7 +54,7 @@ def calculate_discount_amount(discount: Discount, subtotal: int) -> int:
         return min(discount.fixed_amount, subtotal)
     return 0
 
-
+# Order Preview Endpoint
 @router.post("/preview", response_model=OrderPreviewResponse)
 def preview_order(
     preview_data: OrderPreviewRequest,
@@ -134,7 +135,7 @@ def preview_order(
         is_stock_sufficient=is_stock_sufficient,
     )
 
-
+# Create Order Endpoint
 @router.post("/", response_model=OrderResponse, status_code=status.HTTP_201_CREATED)
 async def create_order(
     order_data: OrderCreate,
@@ -255,7 +256,7 @@ async def create_order(
         # In production, you should log the error `e`
         raise HTTPException(status_code=500, detail="An internal error occurred while creating the order.")
 
-
+# Create Payment for Order
 @router.post("/{order_id}/pay", response_model=PaymentResponse)
 def create_payment_for_order(
     order_id: str,
@@ -303,11 +304,11 @@ def create_payment_for_order(
 
     return new_payment
 
-
+# Webhook Endpoint for Payment Gateway
 @router.post("/webhooks/payment-gateway", status_code=status.HTTP_200_OK)
 def handle_payment_webhook(
     payload: WebhookPayload,
-    # Di produksi, Anda akan mendapatkan signature dari header
+    # In production, you will get the signature from the header
     # x_signature: str = Header(...),
     db: Session = Depends(get_db)
 ):
@@ -320,13 +321,13 @@ def handle_payment_webhook(
 
     Payment status: 'completed', 'pending', 'failed', 'refunded'.
     """
-    # Validasi payload (order_id, payment_status) sudah dilakukan oleh FastAPI berkat skema WebhookPayload.
+    # Validate payload (order_id, payment_status) has been done by FastAPI thanks to the WebhookPayload scheme.
 
-    # 1. Verifikasi webhook (sangat penting di produksi!)
+    # 1. Verification webhook (important in product!)
     # secret = "YOUR_WEBHOOK_SECRET_FROM_PAYMENT_GATEWAY"
     # verify_signature(payload, x_signature, secret) -> raises HTTPException if invalid
 
-    # 2. Cari order dan payment
+    # 2. Search for orders and payments
     order = db.get(Order, payload.order_id)
     if not order:
         # Mungkin log error, tapi jangan kirim 404 ke webhook
@@ -334,7 +335,7 @@ def handle_payment_webhook(
 
     payment = db.query(Payment).filter(Payment.order_id == order.id).first()
 
-    # 3. Update status jika pembayaran berhasil
+    # 3. Update your status if the payment is successful
     if payload.payment_status == PaymentStatus.COMPLETED:
         if payment:
             payment.status = PaymentStatus.COMPLETED
@@ -344,7 +345,7 @@ def handle_payment_webhook(
             order.status = OrderStatus.PROCESSING
         
         db.commit()
-        # Kirim email notifikasi pembayaran berhasil ke customer
+        # Send email notification to customer
 
     return {"message": "Webhook processed successfully"}
 
@@ -466,8 +467,8 @@ def cancel_order(
 @router.patch("/{order_id}/ship", response_model=OrderResponse)
 def ship_order_by_admin(
     order_id: str,
-    order_update: OrderUpdateStatusByAdmin, # Menggunakan schema baru
-    current_user: User = Depends(get_admin_user), # Hanya untuk admin
+    order_update: OrderUpdateStatusByAdmin, 
+    current_user: User = Depends(get_admin_user), 
     db: Session = Depends(get_db)
 ):
     """
@@ -488,18 +489,18 @@ def ship_order_by_admin(
             detail=f"Order must be in 'processing' status to be shipped. Current status: {order.status}"
         )
 
-    order.status = order_update.status # Akan selalu 'shipped' karena validasi schema
+    order.status = order_update.status # The status will always be 'shipped'
     db.commit()
     db.refresh(order)
-    # Kirim email notifikasi pengiriman ke customer
+    # Send email notification to customer    
     return order
 
 
 @router.patch("/{order_id}/deliver", response_model=OrderResponse)
 def deliver_order_by_customer(
     order_id: str,
-    order_update: OrderUpdateStatusByCustomer, # Menggunakan schema baru
-    current_user: User = Depends(get_current_user), # Untuk customer
+    order_update: OrderUpdateStatusByCustomer, 
+    current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_db)
 ):
     """
@@ -517,7 +518,7 @@ def deliver_order_by_customer(
     if order.status != OrderStatus.SHIPPED:
         raise HTTPException(status_code=400, detail=f"Cannot confirm delivery for an order that is not 'shipped'.")
 
-    order.status = order_update.status # Akan selalu 'delivered'
+    order.status = order_update.status # The status will always be 'delivered'
     db.commit()
     db.refresh(order)
     return order

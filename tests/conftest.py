@@ -22,7 +22,7 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
+# Dependency override
 def override_get_db():
     """Override database dependency for testing"""
     try:
@@ -35,7 +35,7 @@ def override_get_db():
 # Override the dependency
 app.dependency_overrides[get_db] = override_get_db
 
-
+# Fixtures
 @pytest.fixture(scope="session")
 def db_engine():
     """Create database engine for tests"""
@@ -43,7 +43,7 @@ def db_engine():
     yield engine
     Base.metadata.drop_all(bind=engine)
 
-
+# Fixture for database session
 @pytest.fixture(scope="function")
 def db_session(db_engine):
     """Create a new database session for each test"""
@@ -57,13 +57,13 @@ def db_session(db_engine):
     transaction.rollback()
     connection.close()
 
-
+# Fixture for test client
 @pytest.fixture(scope="function")
 def client():
     """Create test client"""
     return TestClient(app)
 
-
+# Fixtures for test data
 @pytest.fixture(scope="session")
 def test_role(db_engine):
     """Create test role"""
@@ -75,7 +75,7 @@ def test_role(db_engine):
     db.close()
     return role_id
 
-
+# Fixture for test user
 @pytest.fixture(scope="session")
 def test_user(db_engine, test_role):
     """Create test user"""
@@ -93,7 +93,7 @@ def test_user(db_engine, test_role):
     db.close()
     return user_id
 
-
+# Fixture for test brand
 @pytest.fixture(scope="session")
 def test_brand(db_engine):
     """Create test brand"""
@@ -105,7 +105,7 @@ def test_brand(db_engine):
     db.close()
     return brand_id
 
-
+# Fixture for test category
 @pytest.fixture(scope="session")
 def test_category(db_engine):
     """Create test category"""
@@ -122,7 +122,7 @@ def test_category(db_engine):
     db.close()
     return category_id
 
-
+# Fixture for authentication token
 @pytest.fixture
 def auth_token(client):
     """Get authentication token for tests"""
@@ -135,7 +135,7 @@ def auth_token(client):
     )
     return response.json()["access_token"]
 
-
+# Fixture for authentication headers
 @pytest.fixture
 def auth_headers(auth_token):
     """Get authentication headers"""

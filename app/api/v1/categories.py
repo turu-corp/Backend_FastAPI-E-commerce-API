@@ -14,7 +14,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-
+# Category Endpoints
 @router.get("/", response_model=List[CategoryResponse])
 def get_categories(
     skip: int = Query(0, ge=0),
@@ -42,7 +42,7 @@ def get_categories(
     categories = query.offset(skip).limit(limit).all()
     return categories
 
-
+# Category Tree Endpoint
 @router.get("/tree", response_model=List[CategoryWithChildren])
 def get_category_tree(db: Session = Depends(get_db)):
     """
@@ -51,7 +51,7 @@ def get_category_tree(db: Session = Depends(get_db)):
     root_categories = db.query(Category).filter(Category.parent_id.is_(None)).all()
     return root_categories
 
-
+# Get Category by ID
 @router.get("/{category_id}", response_model=CategoryWithParent)
 def get_category(category_id: str, db: Session = Depends(get_db)):
     """Get a specific category by ID with parent info"""
@@ -66,7 +66,7 @@ def get_category(category_id: str, db: Session = Depends(get_db)):
     
     return category
 
-
+# Get Category by Slug
 @router.get("/slug/{slug}", response_model=CategoryWithChildren)
 def get_category_by_slug(slug: str, db: Session = Depends(get_db)):
     """Get a category by its slug with subcategories"""
@@ -76,7 +76,7 @@ def get_category_by_slug(slug: str, db: Session = Depends(get_db)):
     
     return category
 
-
+# Create Category
 @router.post("/", response_model=CategoryResponse, status_code=status.HTTP_201_CREATED)
 def create_category(
     category_data: CategoryCreate,
@@ -109,7 +109,7 @@ def create_category(
     
     return new_category
 
-
+# Update Category
 @router.put("/{category_id}", response_model=CategoryResponse)
 def update_category(
     category_id: str,
@@ -153,7 +153,7 @@ def update_category(
     
     return category
 
-
+# Delete Category
 @router.delete("/{category_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_category(
     category_id: str,

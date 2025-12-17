@@ -34,6 +34,7 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 
+# --- Role Schemas ---
 class RoleBase(BaseModel):
     name: str
 
@@ -46,6 +47,7 @@ class RoleRead(RoleBase):
     class Config:
         from_attributes = True
 
+# --- User Profile Schemas ---
 class UserProfileBase(BaseModel):
     phone_number: Optional[str] = None
     date_of_birth: Optional[datetime] = None
@@ -63,7 +65,6 @@ class UserProfileRead(UserProfileBase):
 
 class UserProfileUpdate(UserProfileBase):
     pass
-
 
 # --- Address Schemas ---
 class AddressBase(BaseModel):

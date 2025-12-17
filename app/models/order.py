@@ -8,7 +8,7 @@ from datetime import datetime
 if TYPE_CHECKING:
     from .user import User, Address
 
-
+# Order Model
 class Order(TimeStampedModel, table=True):
     __tablename__ = "orders"
     user_id: uuid.UUID = Field(foreign_key="users.id")
@@ -28,7 +28,7 @@ class Order(TimeStampedModel, table=True):
     items: List["OrderItem"] = Relationship(back_populates="order")
     payment: Optional["Payment"] = Relationship(back_populates="order", sa_relationship_kwargs={'uselist': False})
     
-
+# OrderItem Model
 class OrderItem(TimeStampedModel, table=True):
     __tablename__ = "order_items"
     order_id: uuid.UUID = Field(foreign_key="orders.id")
@@ -40,6 +40,7 @@ class OrderItem(TimeStampedModel, table=True):
     order: Order = Relationship(back_populates="items")
     variant: ProductVariant = Relationship()
 
+# Payment Model
 class Payment(TimeStampedModel, table=True):
     __tablename__ = "payments"
     order_id: uuid.UUID = Field(foreign_key="orders.id", unique=True)
@@ -49,6 +50,7 @@ class Payment(TimeStampedModel, table=True):
 
     order: Order = Relationship(back_populates="payment")
 
+# Shipping Model
 class Shipping(TimeStampedModel, table=True):
     __tablename__ = "shippings"
     # This model represents available shipping options, not a specific order's shipping details.
@@ -60,6 +62,7 @@ class Shipping(TimeStampedModel, table=True):
     taxpayer_identification_number: Optional[str] = Field(max_length=12, default=None)
     orders: List["Order"] = Relationship(back_populates="shipping")
 
+# Discount Model
 class Discount(TimeStampedModel, table=True):
     __tablename__ = "discounts"
     code: str = Field(max_length=255, unique=True, nullable=False)

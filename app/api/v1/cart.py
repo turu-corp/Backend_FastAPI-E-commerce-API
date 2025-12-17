@@ -15,7 +15,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-
+# Cart Endpoints
 @router.get("/", response_model=CartResponse)
 def get_cart(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     """
@@ -32,7 +32,7 @@ def get_cart(db: Session = Depends(get_db), current_user: User = Depends(get_cur
 
     return cart
 
-
+# Add Item to Cart
 @router.post("/items", response_model=AddToCartResponse, status_code=status.HTTP_201_CREATED)
 def add_to_cart(
     item_data: CartItemCreate,
@@ -86,7 +86,7 @@ def add_to_cart(
             cart_item=cart_item
         )
 
-
+# Update Cart Item
 @router.put("/items/{item_id}", response_model=CartItemResponse)
 def update_cart_item(
     item_id: str,
@@ -129,7 +129,7 @@ def update_cart_item(
     db.refresh(cart_item)
     return cart_item
 
-
+# Delete Cart Item
 @router.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 def remove_cart_item(
     item_id: str,

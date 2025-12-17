@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .cart import Cart
     from .product import Review
 
-
+# User Address and Role Models
 class Role(TimeStampedModel, table=True):
     __tablename__ = "roles"
     name: str = Field(max_length=255, unique=True, nullable=False)
@@ -40,10 +40,6 @@ class UserProfile(TimeStampedModel, table=True):
     birth_date: Optional[str] = Field(default=None)
 
     user: User = Relationship(back_populates="profile")
-
-# c:\Users\Daffi\projek_dummy\app\models\user.py
-
-# ... (impor dan model User lainnya) ...
 
 class Address(TimeStampedModel, table=True):
     __tablename__ = "addresses"

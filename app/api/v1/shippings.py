@@ -11,6 +11,8 @@ from app.models.user import User
 
 router = APIRouter()
 
+# Shipping Endpoints
+# Create Shipping
 @router.post("/", response_model=ShippingResponse, status_code=status.HTTP_201_CREATED)
 def create_shipping(
     shipping_data: ShippingCreate,
@@ -30,6 +32,7 @@ def create_shipping(
     db.refresh(new_shipping)
     return new_shipping
 
+# Get All Shippings
 @router.get("/", response_model=List[ShippingResponse])
 def get_all_shippings(
     db: Session = Depends(get_db),
@@ -41,6 +44,7 @@ def get_all_shippings(
     shippings = db.query(Shipping).all()
     return shippings
 
+# Get Shipping by ID
 @router.put("/{shipping_id}", response_model=ShippingResponse)
 def update_shipping(
     shipping_id: str,
@@ -69,6 +73,7 @@ def update_shipping(
     db.refresh(shipping)
     return shipping
 
+# Delete Shipping
 @router.delete("/shippings/{shipping_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_shipping(
     shipping_id: str,

@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from app.utils.security import pwd_context, create_access_token
 from pydantic import EmailStr, ValidationError, TypeAdapter
-from app.models.user import Role, User  # Path impor baru
-from app.schemas.user import UserCreate, UserRead # Path impor baru
-from app.schemas.auth import Token # Skema baru untuk token
+from app.models.user import Role, User  
+from app.schemas.user import UserCreate, UserRead 
+from app.schemas.auth import Token 
 from app.database import get_db, SessionLocal
 from app.services import EmailService
 
@@ -37,7 +37,7 @@ def register(user: UserCreate, session: SessionLocal = Depends(get_db)): # type:
     session.commit()
     session.refresh(db_user)
 
-    # Panggil fungsi pengirim email dari service layer
+    # Send welcome email (optional)
     # EmailService.send_welcome_email(email=db_user.email, name=db_user.name)
 
     return db_user
@@ -45,7 +45,7 @@ def register(user: UserCreate, session: SessionLocal = Depends(get_db)): # type:
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), session: SessionLocal = Depends(get_db)): # type: ignore
     try:
-        # 1. Validasi format email dan konversi ke lowercase
+        # 1. Validate email format and conversion to lowercase 
         email_adapter = TypeAdapter(EmailStr)
         email = email_adapter.validate_python(form_data.username.lower())
     except ValidationError:
@@ -54,10 +54,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session: SessionLoca
             detail="Invalid email format for username",
         )
 
-    # 2. Cari user berdasarkan email lowercase
+    # 2. Find user based on email lowercase 
     db_user = session.query(User).filter(User.email == email).first()
 
-    # 3. Verifikasi user dan password
+    # 3. Verification the user and password 
     if not db_user or not pwd_context.verify(form_data.password, db_user.hashed_password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
     token = create_access_token(data={"sub": db_user.email})

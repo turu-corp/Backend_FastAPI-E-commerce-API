@@ -4,6 +4,8 @@ import uuid
 from datetime import datetime
 
 # Forward reference for ProductVariantResponse if needed
+
+# Cart Schemas
 class ProductVariantResponse(BaseModel):
     id: uuid.UUID
     sku: str
@@ -13,16 +15,20 @@ class ProductVariantResponse(BaseModel):
     class Config:
         from_attributes = True
 
+# Cart Item Schemas
 class CartItemBase(BaseModel):
     variant_id: uuid.UUID
     quantity: int
 
+# Cart Item Create Schema
 class CartItemCreate(CartItemBase):
     pass
 
+# Cart Item Schemas
 class CartItemUpdate(BaseModel):
     quantity: Optional[int] = None
 
+# Cart Item Response Schema
 class CartItemResponse(CartItemBase):
     id: uuid.UUID
     variant: Optional[ProductVariantResponse] = None
@@ -30,6 +36,7 @@ class CartItemResponse(CartItemBase):
     class Config:
         from_attributes = True
 
+# Cart Response Schema
 class CartResponse(BaseModel):
     id: uuid.UUID
     user_id: uuid.UUID
@@ -40,6 +47,7 @@ class CartResponse(BaseModel):
     class Config:
         from_attributes = True
 
+# Add to Cart Response Schema
 class AddToCartResponse(BaseModel):
     message: str
     cart_item: CartItemResponse

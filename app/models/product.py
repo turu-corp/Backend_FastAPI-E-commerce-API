@@ -5,6 +5,7 @@ from sqlmodel import Field, Relationship, SQLModel, Column, TEXT
 from app.models.user import User
 from .base import TimeStampedModel
 
+# Brand, Category, Product, ProductImage, ProductVariant, Review, Attribute, AttributeValue, VariantAttributeValue Models
 class Brand(TimeStampedModel, table=True):
     __tablename__ = "brands"
     name: str = Field(max_length=255, nullable=False)

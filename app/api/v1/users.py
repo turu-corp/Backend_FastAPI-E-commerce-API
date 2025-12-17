@@ -10,7 +10,8 @@ from app.dependencies import get_current_active_user
 
 router = APIRouter()
 
-
+# User Endpoints
+# Get Current User Profile
 @router.get("/me", response_model=UserRead)
 def read_users_me(current_user: User = Depends(get_current_active_user)):
     """
@@ -18,7 +19,7 @@ def read_users_me(current_user: User = Depends(get_current_active_user)):
     """
     return current_user
 
-
+# Add Address for Current User
 @router.post("/me/addresses", response_model=AddressResponse, status_code=status.HTTP_201_CREATED)
 def add_address(
     address_data: AddressCreate,
@@ -38,7 +39,7 @@ def add_address(
     db.refresh(new_address)
     return new_address
 
-
+# Get All Addresses for Current User
 @router.get("/me/addresses", response_model=List[AddressResponse])
 def get_my_addresses(
     current_user: User = Depends(get_current_active_user),
@@ -49,7 +50,7 @@ def get_my_addresses(
     """
     return db.query(Address).filter(Address.user_id == current_user.id).all()
 
-
+# Delete Address for Current User
 @router.delete("/me/addresses/{address_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_address(
     address_id: str,

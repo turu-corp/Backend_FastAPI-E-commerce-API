@@ -11,7 +11,7 @@ from app.models.user import User
 
 router = APIRouter()
 
-
+# Discount Endpoints
 @router.post("/", response_model=DiscountResponse, status_code=status.HTTP_201_CREATED)
 def create_discount(
     discount_data: DiscountCreate,
@@ -33,7 +33,7 @@ def create_discount(
     db.refresh(new_discount)
     return new_discount
 
-
+# Get All Discounts
 @router.get("/", response_model=List[DiscountResponse])
 def get_all_discounts(
     db: Session = Depends(get_db),
@@ -45,7 +45,7 @@ def get_all_discounts(
     discounts = db.query(Discount).all()
     return discounts
 
-
+# Get Discount by ID
 @router.put("/{discount_id}", response_model=DiscountResponse)
 def update_discount(
     discount_id: str,

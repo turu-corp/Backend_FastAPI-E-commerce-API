@@ -20,12 +20,12 @@ conf = ConnectionConfig(
 
 
 class EmailService:
-    """Service untuk mengirim email (workflow automation)"""
+    """Service for sending emails(workflow automation)"""
     
     @staticmethod
     async def send_welcome_email(email: str, name: str):
         """
-        Kirim email selamat datang setelah registrasi (workflow automation)
+        Send welcome email after registration (workflow automation)
         """
         try:
             html = f"""
@@ -69,7 +69,7 @@ class EmailService:
     @staticmethod
     async def send_order_confirmation(email: str, name: str, order_id: str, total_price: int):
         """
-        Kirim email konfirmasi pesanan (workflow automation)
+        Send confirmation email for order (workflow automation)
         """
         try:
             html = f"""
@@ -114,7 +114,7 @@ class EmailService:
     @staticmethod
     async def send_password_reset(email: str, name: str, reset_token: str):
         """
-        Kirim email reset password (workflow automation)
+        Send reset password email (workflow automation)
         """
         try:
             reset_link = f"https://yourwebsite.com/reset-password?token={reset_token}"

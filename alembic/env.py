@@ -9,12 +9,11 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from sqlmodel import SQLModel # Impor SQLModel
-from app.models import * # Impor semua model Anda
-from app.config import settings # Impor settings Anda
+from sqlmodel import SQLModel 
+from app.models import * 
+from app.config import settings 
 
-# target_metadata = None
-target_metadata = SQLModel.metadata # Hanya gunakan metadata dari SQLModel
+target_metadata = SQLModel.metadata 
 
 
 # ...
